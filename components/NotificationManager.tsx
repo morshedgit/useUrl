@@ -4,9 +4,8 @@ import { useUrl } from "@/common/hooks/useUrl";
 import { Notification } from "@/common/types";
 
 const NotificationManager = (props: {}) => {
-  const [notifications, setNotifications] = useUrl<Notification[], string>(
-    "notifications"
-  );
+  const [notifications, setNotifications] =
+    useUrl<Notification[]>("notifications");
   return (
     <div className="fixed bottom-10 left-10 grid grid-cols-1 gap-4">
       {/* <button

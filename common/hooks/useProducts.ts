@@ -19,16 +19,13 @@ const getUrl = (searchTerm?: string) => {
   return url;
 };
 export const useProducts = () => {
-  const [searchTerm] = useUrl<string, string>("searchTerm");
-  const [_, setSearchTermLoading] = useUrl<boolean, string>(
-    "searchTermLoading"
-  );
-  const [filters] = useUrl<string[], string>("filters");
-  const [sort] = useUrl<string, string>("sort");
+  const [searchTerm] = useUrl<string>("searchTerm");
+  const [_, setSearchTermLoading] = useUrl<boolean>("searchTermLoading");
+  const [filters] = useUrl<string[]>("filters");
+  const [sort] = useUrl<string>("sort");
   const [products, setProducts] = useState<Product[]>([]);
-  const [notifications, setNotifications] = useUrl<Notification[], string>(
-    "notifications"
-  );
+  const [notifications, setNotifications] =
+    useUrl<Notification[]>("notifications");
   const deboucedSearchTerm = useDebounce(searchTerm, 0);
 
   useFetch<Product[], string>(

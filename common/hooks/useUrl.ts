@@ -44,7 +44,10 @@ export const getQueryParams = <T>(): QueryParams<T> => {
 let queuedUpdates: QueryParams<any> = {};
 let timeoutId: number | null = null;
 
-export const useUrl = <T, K extends keyof QueryParams<T>>(
+export const useUrl = <
+  T,
+  K extends keyof QueryParams<T> = keyof QueryParams<T>
+>(
   key: string
 ): [QueryParams<T>[K], (newValue: T) => void] => {
   const [queryParams, setQueryParams] = useState<QueryParams<T>>(

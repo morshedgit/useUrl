@@ -7,10 +7,10 @@ import Spinner from "./Spinner";
 type SearchFilterSortProps = {};
 
 export const SearchFilterSort: React.FC<SearchFilterSortProps> = ({}) => {
-  const [searchTerm, setSearchTerm] = useUrl<string, string>("searchTerm");
-  const [searchTermLoading] = useUrl<string, string>("searchTermLoading");
-  const [filters, setFilters] = useUrl<string[], string>("filters");
-  const [sort, setSort] = useUrl<string, string>("sort");
+  const [searchTerm, setSearchTerm] = useUrl<string>("searchTerm");
+  const [searchTermLoading] = useUrl<string>("searchTermLoading");
+  const [filters, setFilters] = useUrl<string[]>("filters");
+  const [sort, setSort] = useUrl<string>("sort");
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-4 p-4 bg-white rounded-lg shadow mb-6">
