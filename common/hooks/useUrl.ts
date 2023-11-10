@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 type QueryParams<T> = {
   [key: string]: T | undefined;
@@ -26,7 +26,7 @@ const subscribe = (callback: (params: QueryParams<any>) => void) => {
 };
 
 // Parses the current URL's search parameters into an object
-const getQueryParams = <T>(): QueryParams<T> => {
+export const getQueryParams = <T>(): QueryParams<T> => {
   const searchParams = new URLSearchParams(window.location.search);
   const params: QueryParams<T> = {};
   searchParams.forEach((value, key) => {
@@ -41,59 +41,76 @@ const getQueryParams = <T>(): QueryParams<T> => {
   return params;
 };
 
+let queuedUpdates: QueryParams<any> = {};
+let timeoutId: number | null = null;
+
 export const useUrl = <T, K extends keyof QueryParams<T>>(
   key: string
-): [QueryParams<T>[K], (newParams: QueryParams<T>) => void] => {
+): [QueryParams<T>[K], (newValue: T) => void] => {
   const [queryParams, setQueryParams] = useState<QueryParams<T>>(
     getQueryParams()
   );
 
-  // Update the queryParams state and notify all subscribers
-  const updateQueryParams = useCallback(
-    (newParams: QueryParams<T>) => {
-      const searchParams = new URLSearchParams();
+  const applyUpdates = () => {
+    const searchParams = new URLSearchParams();
 
-      // Merge newParams into the existing queryParams
-      Object.entries({ ...queryParams, ...newParams }).forEach(
-        ([key, value]) => {
-          if (value !== undefined) {
-            // Convert object values to JSON strings
-            const stringValue =
-              typeof value === "object"
-                ? JSON.stringify(value)
-                : value.toString();
-            searchParams.set(key, stringValue);
-          } else {
-            // If value is undefined, remove the key
-            searchParams.delete(key);
-          }
-        }
-      );
+    // Collect all updates
+    const combinedParams = { ...queryParams, ...queuedUpdates };
 
-      // Update the URL without causing a page reload
-      window.history.pushState(
-        {},
-        "",
-        `${window.location.pathname}?${searchParams}`
-      );
+    // Convert combinedParams to URLSearchParams
+    Object.entries(combinedParams).forEach(([key, value]) => {
+      if (value !== undefined) {
+        const stringValue =
+          typeof value === "object" ? JSON.stringify(value) : value.toString();
+        searchParams.set(key, stringValue);
+      } else {
+        searchParams.delete(key);
+      }
+    });
 
-      // Get the updated queryParams and set the state
-      const updatedQueryParams = getQueryParams<T>();
-      setQueryParams(updatedQueryParams);
+    // Update the URL without causing a page reload
+    window.history.pushState(
+      {},
+      "",
+      `${window.location.pathname}?${searchParams}`
+    );
 
-      // Notify all subscribers about the change
-      notifySubscribers(updatedQueryParams);
-    },
-    [queryParams]
-  );
+    // Clear the queued updates after applying them
+    queuedUpdates.current = {};
+
+    // Update state and notify subscribers
+    const updatedQueryParams = getQueryParams<T>();
+    setQueryParams(updatedQueryParams);
+    notifySubscribers(updatedQueryParams);
+  };
+
+  const updateQueryParams = (newParams: QueryParams<T>) => {
+    // Queue updates
+    queuedUpdates = { ...queuedUpdates, ...newParams };
+
+    // Clear the previous timeout
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+    }
+
+    // Set a new timeout to batch updates
+    timeoutId = window.setTimeout(() => {
+      applyUpdates();
+    }, 10);
+  };
 
   useEffect(() => {
     // Subscribe to changes
     const unsubscribe = subscribe(setQueryParams);
 
-    // Unsubscribe when the component unmounts
-    return unsubscribe;
+    // Unsubscribe when the component unmounts and clear any pending updates
+    return () => {
+      unsubscribe();
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, []);
 
-  return [queryParams[key], updateQueryParams];
+  return [queryParams[key], (value: T) => updateQueryParams({ [key]: value })];
 };

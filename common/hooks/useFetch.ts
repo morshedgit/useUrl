@@ -19,18 +19,30 @@ export const useFetch = <R, E>(
   const { setResult, setLoading, setError } = state;
 
   useEffect(() => {
+    const abortController = new AbortController(); // Create a new instance of AbortController
+    const { signal } = abortController; // Get the AbortSignal from the controller
+
     const run = async () => {
       try {
         setLoading(true);
-        await wait(2000);
-        const res = await fetch(endpointUrl, {
+        await wait(100);
+        if (Math.random() > 0.9) {
+          throw new Error("400: Bad Request");
+        }
+        const res = await fetch(endpointUrl.toString(), {
           method: "GET",
           headers: { "content-type": "application/json" },
+          signal, // Pass the AbortSignal to the fetch call
         });
         const jsonRes = (await res.json()) as R;
         setResult(jsonRes);
-      } catch (e: unknown) {
-        setError(e as E);
+      } catch (e: any) {
+        if (e.name === "AbortError") {
+          // Handle abort error, but typically no setState is needed
+          console.log("Fetch aborted");
+        } else {
+          setError(e.message as E);
+        }
       } finally {
         setLoading(false);
       }
@@ -38,6 +50,9 @@ export const useFetch = <R, E>(
 
     run();
 
-    return () => {};
+    // Cleanup function to abort the fetch when component unmounts or deps change
+    return () => {
+      abortController.abort();
+    };
   }, [...deps]);
 };

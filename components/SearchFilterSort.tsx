@@ -4,17 +4,9 @@ import React from "react";
 import { useUrl } from "@/common/hooks/useUrl";
 import Spinner from "./Spinner";
 
-type SearchFilterSortProps = {
-  onSearch: (term: string) => void;
-  onFilter: (category: string) => void;
-  onSort: (sortOrder: string) => void;
-};
+type SearchFilterSortProps = {};
 
-export const SearchFilterSort: React.FC<SearchFilterSortProps> = ({
-  onSearch,
-  onFilter,
-  onSort,
-}) => {
+export const SearchFilterSort: React.FC<SearchFilterSortProps> = ({}) => {
   const [searchTerm, setSearchTerm] = useUrl<string, string>("searchTerm");
   const [searchTermLoading] = useUrl<string, string>("searchTermLoading");
   const [filters, setFilters] = useUrl<string[], string>("filters");
@@ -29,8 +21,7 @@ export const SearchFilterSort: React.FC<SearchFilterSortProps> = ({
           placeholder="Search products..."
           value={searchTerm || ""}
           onChange={(e) => {
-            setSearchTerm({ searchTerm: e.target.value });
-            onSearch(e.target.value);
+            setSearchTerm(e.target.value);
           }}
         />
         {searchTermLoading && (
@@ -52,8 +43,7 @@ export const SearchFilterSort: React.FC<SearchFilterSortProps> = ({
           } else {
             updatedFilters = [...(filters || []), "Electronics"];
           }
-          setFilters({ filters: updatedFilters });
-          onFilter("Electronics");
+          setFilters(updatedFilters);
         }}
       >
         Electronics
@@ -69,8 +59,7 @@ export const SearchFilterSort: React.FC<SearchFilterSortProps> = ({
           } else {
             updatedFilters = [...(filters || []), "Home"];
           }
-          setFilters({ filters: updatedFilters });
-          onFilter("Home");
+          setFilters(updatedFilters);
         }}
       >
         Home
@@ -79,8 +68,7 @@ export const SearchFilterSort: React.FC<SearchFilterSortProps> = ({
         className="p-2 border rounded"
         value={sort || ""}
         onChange={(e) => {
-          setSort({ sort: e.target.value });
-          onSort(e.target.value);
+          setSort(e.target.value);
         }}
       >
         <option value="price-asc">Price: Low to High</option>

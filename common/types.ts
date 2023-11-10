@@ -6,3 +6,10 @@ export type Product = {
   category: string;
   imageUrl?: string;
 };
+
+export type Notification = {
+  type: "danger" | "info" | "success";
+  title: string;
+  body: string;
+  open?: boolean;
+};

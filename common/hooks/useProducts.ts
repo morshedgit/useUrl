@@ -3,6 +3,7 @@ import { useUrl } from "./useUrl";
 import { Product } from "../types";
 import { useFetch } from "./useFetch";
 import { useDebounce } from "./useDebounce";
+import { Notification } from "@/common/types";
 
 // const url = new URL(
 //   "https://65272d3e917d673fd76d7c05.mockapi.io/api/v1/products"
@@ -25,15 +26,29 @@ export const useProducts = () => {
   const [filters] = useUrl<string[], string>("filters");
   const [sort] = useUrl<string, string>("sort");
   const [products, setProducts] = useState<Product[]>([]);
-  const deboucedSearchTerm = useDebounce(searchTerm, 1000);
+  const [notifications, setNotifications] = useUrl<Notification[], string>(
+    "notifications"
+  );
+  const deboucedSearchTerm = useDebounce(searchTerm, 0);
 
-  useFetch<Product[], unknown>(
+  useFetch<Product[], string>(
     getUrl(searchTerm),
     {
       setResult: setProducts,
-      setLoading: (v: boolean) =>
-        setSearchTermLoading({ searchTermLoading: v }),
-      setError: () => null,
+      setLoading: (v: boolean) => setSearchTermLoading(v),
+      setError: (e) => {
+        console.log(e);
+
+        setNotifications([
+          ...(notifications || []),
+          {
+            title: "Error",
+            body: JSON.stringify(e),
+            open: true,
+            type: "danger",
+          },
+        ]);
+      },
     },
     [deboucedSearchTerm]
   );
