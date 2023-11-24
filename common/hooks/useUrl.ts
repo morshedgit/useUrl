@@ -27,6 +27,7 @@ const subscribe = (callback: (params: QueryParams<any>) => void) => {
 
 // Parses the current URL's search parameters into an object
 export const getQueryParams = <T>(): QueryParams<T> => {
+  if (typeof window === "undefined") return {};
   const searchParams = new URLSearchParams(window?.location.search);
   const params: QueryParams<T> = {};
   searchParams.forEach((value, key) => {
