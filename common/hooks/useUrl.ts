@@ -27,7 +27,7 @@ const subscribe = (callback: (params: QueryParams<any>) => void) => {
 
 // Parses the current URL's search parameters into an object
 export const getQueryParams = <T>(): QueryParams<T> => {
-  const searchParams = new URLSearchParams(window.location.search);
+  const searchParams = new URLSearchParams(window?.location.search);
   const params: QueryParams<T> = {};
   searchParams.forEach((value, key) => {
     try {
@@ -72,10 +72,10 @@ export const useUrl = <
     });
 
     // Update the URL without causing a page reload
-    window.history.pushState(
+    window?.history.pushState(
       {},
       "",
-      `${window.location.pathname}?${searchParams}`
+      `${window?.location.pathname}?${searchParams}`
     );
 
     // Clear the queued updates after applying them
@@ -97,7 +97,7 @@ export const useUrl = <
     }
 
     // Set a new timeout to batch updates
-    timeoutId = window.setTimeout(() => {
+    timeoutId = window?.setTimeout(() => {
       applyUpdates();
     }, 10);
   };
