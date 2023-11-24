@@ -2,8 +2,10 @@ export async function GET(request: Request) {
   // Extract the code from the query parameters
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
+  console.log("Reached");
 
   if (!code) {
+    console.log("No code provided");
     return new Response(JSON.stringify({ error: "No code provided" }), {
       status: 400,
       headers: {
@@ -38,6 +40,7 @@ export async function GET(request: Request) {
     });
 
     if (!response.ok) {
+      console.log(`Server responded with ${response.status}`);
       throw new Error(`Server responded with ${response.status}`);
     }
 
@@ -54,6 +57,7 @@ export async function GET(request: Request) {
       },
     });
   } catch (error: any) {
+    console.log({ error: error.message });
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: {
