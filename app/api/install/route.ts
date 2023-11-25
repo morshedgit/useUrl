@@ -1,5 +1,3 @@
-import type { NextApiRequest } from "next";
-
 const randomNonce = () => String(Math.random());
 
 export async function GET(request: Request) {

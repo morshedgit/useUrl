@@ -4,6 +4,8 @@
 //   const code = url.searchParams.get("code");
 //   console.log("Reached");
 
+import { setXShopifyToken } from "@/lib/services/tokenService";
+
 //   if (!code) {
 //     console.log("No code provided");
 //     return new Response(JSON.stringify({ error: "No code provided" }), {
@@ -94,12 +96,13 @@ export async function GET(request: Request) {
   // Store the access token securely
   console.log("Access_Token: ", access_token);
 
+  setXShopifyToken(access_token);
+
   // Create a new Response object for the redirect
   return new Response(null, {
     status: 302,
     headers: {
       Location: `/?shop=${shop}`,
-      "X-Shopify-Access-Token": access_token,
     },
   });
 }
