@@ -98,7 +98,8 @@ export async function GET(request: Request) {
   return new Response(null, {
     status: 302,
     headers: {
-      Location: `/dashboard?shop=${shop}`,
+      Location: `/?shop=${shop}`,
+      "X-Shopify-Access-Token": access_token,
     },
   });
 }
