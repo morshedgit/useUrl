@@ -1,14 +1,14 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest } from "next";
 
 const randomNonce = () => String(Math.random());
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const shop = req.query.shop as string;
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const shop = url.searchParams.get("shop");
   if (!shop) {
-    return res.status(400).json({ error: "No shop provided" });
+    return new Response(JSON.stringify({ error: "No shop provided" }), {
+      status: 400,
+    });
   }
 
   const scopes = "write_products,read_orders";
@@ -17,5 +17,11 @@ export default async function handler(
     process.env.SHOPIFY_API_KEY
   }&scope=${scopes}&redirect_uri=${redirectUri}&state=${randomNonce()}`;
 
-  res.redirect(302, installUrl);
+  // Create a new Response object for the redirect
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: installUrl,
+    },
+  });
 }

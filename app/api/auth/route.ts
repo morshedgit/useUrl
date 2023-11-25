@@ -67,18 +67,14 @@
 //   }
 // }
 
-import type { NextApiRequest, NextApiResponse } from "next";
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export async function GET(request: Request) {
   console.log("Initializing OAuth Code Flow");
-  const { shop, code, state } = req.query as {
-    shop: string;
-    code: string;
-    state: string;
-  };
+
+  const url = new URL(request.url);
+  const code = url.searchParams.get("code");
+  const shop = url.searchParams.get("shop");
+  const state = url.searchParams.get("state");
+
   // Security checks should be implemented here
 
   const accessTokenRequestUrl = `https://${shop}/admin/oauth/access_token`;
@@ -98,5 +94,11 @@ export default async function handler(
   // Store the access token securely
   console.log("Access_Token: ", access_token);
 
-  res.redirect(`/dashboard?shop=${shop}`);
+  // Create a new Response object for the redirect
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: `/dashboard?shop=${shop}`,
+    },
+  });
 }
