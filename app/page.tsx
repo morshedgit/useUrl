@@ -1,59 +1,66 @@
 import { fetchGraphQL } from "@/lib/services/graphql";
 import Link from "next/link";
-import { headers } from "next/headers";
+import { readTokenFromFile } from "@/lib/services/fileService";
 
 const gql = String.raw;
 
 const getProducts = async (shop: string) => {
-  const query = gql`
-    query getProductsAndVariants {
-      products(first: 5) {
-        edges {
-          cursor
-          node {
-            id
-            title
-            description
-            handle
-            variants(first: 3) {
-              edges {
-                cursor
-                node {
-                  id
-                  title
-                  price
+  try{
+    const query = gql`
+      query getProductsAndVariants {
+        products(first: 5) {
+          edges {
+            cursor
+            node {
+              id
+              title
+              description
+              handle
+              variants(first: 3) {
+                edges {
+                  cursor
+                  node {
+                    id
+                    title
+                    price
+                  }
                 }
               }
-            }
-            images(first: 1) {
-              edges {
-                node {
-                  transformedSrc
-                  altText
+              images(first: 1) {
+                edges {
+                  node {
+                    transformedSrc
+                    altText
+                  }
                 }
               }
             }
           }
         }
       }
-    }
-  `;
+    `;
+  
+    const products = await fetchGraphQL(shop, query);
+  
+    return products;
 
-  const products = await fetchGraphQL(shop, query);
+  }catch(e:any){
+    console.log(e.message)
+    return []
 
-  return products;
+  }
 };
 
-export default function Home({ searchParams: { shop } }: any) {
-  const headersList = headers();
+export default async function Home({ searchParams: { shop } }: any) {
 
-  console.log(headersList.get("X-Shopify-Access-Token"));
-  // const products = getProducts(shop);
-  // console.log(products);
+  const token = await readTokenFromFile()
+
+  const products = getProducts(shop);
+  console.log(products);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       Welcome
-      <p>Access Token: {headersList.get("X-Shopify-Access-Token")}</p>
+      <p>Access Token: {token}</p>
       <Link href={`/api/install?shop=${shop}`}>Sign In</Link>
     </main>
   );

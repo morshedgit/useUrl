@@ -1,14 +1,19 @@
 import type { NextRequest } from "next/server";
-import { getXShopifyToken } from "./lib/services/tokenService";
+import { readTokenFromFile } from "./lib/services/fileService";
 
 // This function can be marked `async` if using `await` inside
-export function middleware(request: NextRequest) {
-  if (!getXShopifyToken()) {
+export async function middleware(request: NextRequest) {
+  
+  const token = await readTokenFromFile()
+
+  console.log(token)
+
+  if (!token) {
     // Create a new Response object for the redirect
     return new Response(null, {
       status: 302,
       headers: {
-        Location: `/?shop=404-zone.myshopify.com`,
+        Location: `${process.env.HOST}/api/install?shop=404-zone.myshopify.com`,
       },
     });
   }
@@ -23,6 +28,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    "/((?!_next/static|_next/image|favicon.ico).*)",
+    "/((?!api/install|api/auth|_next/static|_next/image|favicon.ico).*)",
   ],
 };
