@@ -1,10 +1,9 @@
-const fs = require('fs');
+const fs = require("fs");
 
-
-export const filePath = 'token.txt'
+export const filePath = "token.txt";
 
 // Function to write a string token to a file
-export const writeTokenToFile = async ( token:string) => {
+export const writeTokenToFile = async (token: string) => {
   try {
     await fs.promises.writeFile(filePath, token);
     console.log(`Token "${token}" has been written to ${filePath}`);
@@ -15,15 +14,15 @@ export const writeTokenToFile = async ( token:string) => {
 
 // Function to read a string token from a file
 export const readTokenFromFile = async () => {
-    return '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'
-//   try {
-//     const token = await fs.promises.readFile(filePath, 'utf8');
-//     console.log(`Token read from ${filePath}: ${token}`);
-//     return token;
-//   } catch (err) {
-//     console.error(`Error reading token from file: ${err}`);
-//     return null;
-//   }
+  return process.env.ACCESS_TOKEN;
+  //   try {
+  //     const token = await fs.promises.readFile(filePath, 'utf8');
+  //     console.log(`Token read from ${filePath}: ${token}`);
+  //     return token;
+  //   } catch (err) {
+  //     console.error(`Error reading token from file: ${err}`);
+  //     return null;
+  //   }
 };
 
 // const tokenToWrite = 'mySecretToken123';
