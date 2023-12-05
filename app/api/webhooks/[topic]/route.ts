@@ -38,7 +38,7 @@ export async function POST(
     // Create a HMAC SHA256 hash of the body using the secret
     const hash = crypto
       .createHmac("sha256", CLIENT_SECRET)
-      .update(body, "utf8")
+      .update(JSON.stringify(body), "utf8")
       .digest("base64");
 
     if (
