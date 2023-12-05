@@ -36,10 +36,8 @@ export default async function Home({ searchParams: { shop } }: any) {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <h1 className="text-7xl">Logs</h1>
       <Button onClick={addLog} />
-      {logs.map((item: { log: Record<string, unknown> }) => (
-        <pre key={JSON.stringify(item.log)}>
-          {JSON.stringify(item.log, null, 2)}
-        </pre>
+      {logs.map((item: { log: { id: string } & Record<string, unknown> }) => (
+        <pre key={item.log.id}>{JSON.stringify(item.log, null, 2)}</pre>
       ))}
     </main>
   );

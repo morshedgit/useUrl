@@ -12,7 +12,7 @@ export async function POST(
   try {
     const body = await req.json();
 
-    AddLog(body);
+    AddLog(body, "Shopify");
 
     console.log({ topic: params.topic, body });
 

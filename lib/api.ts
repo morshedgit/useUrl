@@ -17,11 +17,14 @@ export async function fetchContentfulGraphQL(
   ).then((response) => response.json());
 }
 
-export async function AddLog(log: Object) {
+export async function AddLog(log: Object, consumer: string = "Test") {
   const payload = {
     fields: {
       log: {
         "en-US": log,
+      },
+      name: {
+        "en-US": consumer,
       },
     },
   };
