@@ -12,6 +12,8 @@ export async function POST(
   try {
     const body = await req.json();
 
+    AddLog(body);
+
     console.log({ topic: params.topic, body });
 
     if (!CLIENT_SECRET) throw new Error("No Client Secret Provided");
@@ -46,8 +48,6 @@ export async function POST(
         status: 401,
       });
     }
-
-    AddLog(body);
 
     return new Response("Webhook processed", {
       status: 200,
