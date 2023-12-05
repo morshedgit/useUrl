@@ -37,7 +37,9 @@ export default async function Home({ searchParams: { shop } }: any) {
       <h1 className="text-7xl">Logs</h1>
       <Button onClick={addLog} />
       {logs.map((item: { log: Record<string, unknown> }) => (
-        <pre>{JSON.stringify(item.log, null, 2)}</pre>
+        <pre key={JSON.stringify(item.log)}>
+          {JSON.stringify(item.log, null, 2)}
+        </pre>
       ))}
     </main>
   );
