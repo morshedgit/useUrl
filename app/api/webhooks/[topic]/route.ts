@@ -1,4 +1,5 @@
 // pages/api/webhook.js
+import { AddLog } from "@/lib/api";
 import crypto from "crypto";
 
 // Shopify client secret
@@ -46,8 +47,7 @@ export async function POST(
       });
     }
 
-    // Process the webhook payload
-    // ...
+    AddLog(body);
 
     return new Response("Webhook processed", {
       status: 200,
