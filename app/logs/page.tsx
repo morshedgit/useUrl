@@ -57,15 +57,12 @@ export default async function Home({ searchParams: { shop } }: any) {
           };
           name: string;
         }) => (
-          <div className="w-full py-4">
+          <div className="w-full py-4" key={item.sys.id}>
             <h2>{item.name}</h2>
             <time dateTime={item.sys.publishedAt} className="text-xs">
               {item.sys.publishedAt}
             </time>
-            <pre
-              key={item.sys.id}
-              className="w-full h-24 overflow-y-auto overflow-x-hidden bg-slate-800 text-slate-200"
-            >
+            <pre className="w-full h-24 overflow-y-auto overflow-x-hidden bg-slate-800 text-slate-200">
               {JSON.stringify(item.log, null, 2)}
             </pre>
           </div>
