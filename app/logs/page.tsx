@@ -10,6 +10,16 @@ const getLogs = async () => {
         logCollection {
           items {
             log
+            sys {
+              id
+              publishedAt
+            }
+            contentfulMetadata {
+              tags {
+                name
+              }
+            }
+            name
           }
         }
       }
@@ -33,12 +43,34 @@ export default async function Home({ searchParams: { shop } }: any) {
     console.log({ result });
   };
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1 className="text-7xl">Logs</h1>
-      <Button onClick={addLog} />
-      {logs.map((item: { log: { id: string } & Record<string, unknown> }) => (
-        <pre key={item.log.id}>{JSON.stringify(item.log, null, 2)}</pre>
-      ))}
+    <main className="flex min-h-screen flex-col items-center justify-between px-24">
+      <header className="w-full flex justify-between items-center py-24">
+        <h1 className="text-7xl">Logs</h1>
+        <Button onClick={addLog} />
+      </header>
+      {logs.map(
+        (item: {
+          log: Record<string, unknown>;
+          sys: {
+            id: string;
+            publishedAt: string;
+          };
+          name: string;
+        }) => (
+          <div className="w-full py-4">
+            <h2>{item.name}</h2>
+            <time dateTime={item.sys.publishedAt} className="text-xs">
+              {item.sys.publishedAt}
+            </time>
+            <pre
+              key={item.sys.id}
+              className="w-full h-24 overflow-y-auto overflow-x-hidden bg-slate-800 text-slate-200"
+            >
+              {JSON.stringify(item.log, null, 2)}
+            </pre>
+          </div>
+        )
+      )}
     </main>
   );
 }
